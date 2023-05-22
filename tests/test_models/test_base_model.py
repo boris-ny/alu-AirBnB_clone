@@ -1,65 +1,60 @@
-#!/usr/bin/python3
-"""Unittest for BaseModel class"""
 import unittest
-from models.base_model import BaseModel
 from datetime import datetime
-import uuid
-import json
-import os
+from models.base_model import BaseModel
 
 class TestBaseModel(unittest.TestCase):
-    """This class tests the BaseModel class"""
-    def setUp(self):
-        """This method sets up the tests"""
-        self.base1 = BaseModel()
-        self.base2 = BaseModel()
-        self.base3 = BaseModel()
 
-    def tearDown(self):
-        """This method tears down the tests"""
-        del self.base1
-        del self.base2
-        del self.base3
-        try:
-            os.remove("file.json")
-        except FileNotFoundError:
-            pass
+    def test_init_no_args(self):
+        obj = BaseModel()
+        self.assertIsInstance(obj.id, str)
+        self.assertIsInstance(obj.created_at, datetime)
+        self.assertIsInstance(obj.updated_at, datetime)
 
-    def test_attributes(self):
-        """This method tests the attributes of BaseModel"""
-        self.assertTrue(hasattr(self.base1, "id"))
-        self.assertTrue(hasattr(self.base1, "created_at"))
-        self.assertTrue(hasattr(self.base1, "updated_at"))
-        self.assertFalse(hasattr(self.base1, "random_attr"))
-        self.assertEqual(self.base1.__class__.__name__, "BaseModel")
-        self.assertEqual(self.base1.id, self.base1.id)
-        self.assertEqual(self.base1.created_at, self.base1.created_at)
-        self.assertEqual(self.base1.updated_at, self.base1.updated_at)
-        self.assertNotEqual(self.base1.id, self.base2.id)
-        self.assertNotEqual(self.base1.created_at, self.base2.created_at)
-        self.assertNotEqual(self.base1.updated_at, self.base2.updated_at)
-        self.assertEqual(self.base1.__class__.__name__, self.base2.__class__.__name__)
+    def test_init_with_kwargs(self):
+        kwargs = {
+            'id': '123',
+            'created_at': '2022-01-01T12:00:00.000000',
+            'updated_at': '2022-01-01T12:30:00.000000',
+            'name': 'test',
+            'value': 42
+        }
+        obj = BaseModel(**kwargs)
+        self.assertEqual(obj.id, '123')
+        self.assertEqual(obj.created_at, datetime(2022, 1, 1, 12, 0, 0))
+        self.assertEqual(obj.updated_at, datetime(2022, 1, 1, 12, 30, 0))
+        self.assertEqual(obj.name, 'test')
+        self.assertEqual(obj.value, 42)
 
-    def test_created_at(self):
-        """This method tests the created_at attribute"""
-        self.assertTrue(hasattr(self.base1, "created_at"))
-        self.assertEqual(self.base1.created_at, self.base1.created_at)
-        self.assertNotEqual(self.base1.created_at, self.base2.created_at)
-        self.assertEqual(type(self.base1.created_at), datetime)
+    def test_str(self):
+        obj = BaseModel()
+        obj_str = str(obj)
+        expected_str = "[BaseModel] ({}) {}".format(obj.id, obj.__dict__)
+        self.assertEqual(obj_str, expected_str)
 
-    def test_updated_at(self):
-        """This method tests the updated_at attribute"""
-        self.assertTrue(hasattr(self.base1, "updated_at"))
-        self.assertEqual(self.base1.updated_at, self.base1.updated_at)
-        self.assertNotEqual(self.base1.updated_at, self.base2.updated_at)
-        self.assertEqual(type(self.base1.updated_at), datetime)
-
-    def test_save(self):
-        """This method tests the save method"""
-        self.base1.save()
-        self.assertNotEqual(self.base1.created_at, self.base1.updated_at)
-        self.assertEqual(type(self.base1.updated_at), datetime)
+    def test_save_updates_updated_at(self):
+        obj = BaseModel()
+        prev_updated_at = obj.updated_at
+        obj.save()
+        self.assertNotEqual(obj.updated_at, prev_updated_at)
 
     def test_to_dict(self):
-        """This method tests the to_dict method"""
-        self.base1
+        obj = BaseModel()
+        obj_dict = obj.to_dict()
+        self.assertIsInstance(obj_dict, dict)
+        self.assertEqual(obj_dict['__class__'], 'BaseModel')
+        self.assertEqual(obj_dict['id'], obj.id)
+        self.assertEqual(obj_dict['created_at'], obj.created_at.isoformat())
+        self.assertEqual(obj_dict['updated_at'], obj.updated_at.isoformat())
+
+    def test_to_dict_with_additional_attributes(self):
+        obj = BaseModel()
+        obj.name = 'test'
+        obj.value = 42
+        obj_dict = obj.to_dict()
+        self.assertIn('name', obj_dict)
+        self.assertEqual(obj_dict['name'], 'test')
+        self.assertIn('value', obj_dict)
+        self.assertEqual(obj_dict['value'], 42)
+
+if __name__ == '__main__':
+    unittest.main()

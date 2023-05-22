@@ -2,7 +2,6 @@
 """Test for Place class"""
 from tests.test_models.test_base_model import TestBaseModel
 from models.place import Place
-import unittest
 import os
 
 class Test_Place(TestBaseModel):
