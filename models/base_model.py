@@ -4,7 +4,15 @@
 import uuid
 from datetime import datetime
 import models
+from os import getenv
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import Column, String, DateTime
 
+tformat = "%Y-%m-%dT%H:%M:%S.%f"
+if getenv("HBNB_TYPE_STORAGE") == "db":
+    Base = declarative_base()
+else:
+    Base = object
 class BaseModel():
     """This class is the base model for all other classes"""
     def __init__(self, *args, **kwargs):

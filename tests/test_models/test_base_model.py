@@ -1,54 +1,55 @@
 import unittest
+from datetime import datetime
 from models import BaseModel
 
-
 class TestBaseModel(unittest.TestCase):
+    def setUp(self):
+        self.base_model = BaseModel()
 
-    def test_init(self):
-        """Test that the class can be initialized with no arguments"""
-        model = BaseModel()
-        self.assertEqual(model.id, str(uuid.uuid4()))
-        self.assertIsInstance(model.created_at, datetime)
-        self.assertIsInstance(model.updated_at, datetime)
+    def test_attributes_existence(self):
+        self.assertTrue(hasattr(self.base_model, 'id'))
+        self.assertTrue(hasattr(self.base_model, 'created_at'))
+        self.assertTrue(hasattr(self.base_model, 'updated_at'))
 
-        # Test that the class can be initialized with keyword arguments
-        model = BaseModel(id="1234567890", created_at="2023-05-22T15:45:00.000Z", updated_at="2023-05-22T15:45:00.000Z")
-        self.assertEqual(model.id, "1234567890")
-        self.assertEqual(model.created_at, datetime.fromisoformat("2023-05-22T15:45:00.000Z"))
-        self.assertEqual(model.updated_at, datetime.fromisoformat("2023-05-22T15:45:00.000Z"))
+    def test_id_generation(self):
+        self.assertIsNotNone(self.base_model.id)
+        self.assertIsInstance(self.base_model.id, str)
 
-    def test_str(self):
-        """Test that the string representation of the class is correct"""
-        model = BaseModel()
-        expected_string = "[BaseModel] (1234567890) {'id': '1234567890', 'created_at': '2023-05-22T15:45:00.000Z', 'updated_at': '2023-05-22T15:45:00.000Z'}"
-        self.assertEqual(str(model), expected_string)
+    def test_created_at_type(self):
+        self.assertIsInstance(self.base_model.created_at, datetime)
 
-    def test_save(self):
-        # Test that the save method updates the updated_at attribute
-        model = BaseModel()
-        before_save = model.updated_at
-        model.save()
-        after_save = model.updated_at
-        self.assertNotEqual(before_save, after_save)
+    def test_updated_at_type(self):
+        self.assertIsInstance(self.base_model.updated_at, datetime)
 
-    def test_to_dict(self):
-        # Test that the to_dict method returns a dictionary containing all keys/values of __dict__ of the instance
-        model = BaseModel()
-        expected_dict = {
-            "id": model.id,
-            "created_at": model.created_at.isoformat(),
-            "updated_at": model.updated_at.isoformat(),
-        }
-        self.assertEqual(model.to_dict(), expected_dict)
+    def test_save_updates_updated_at(self):
+        old_updated_at = self.base_model.updated_at
+        self.base_model.save()
+        new_updated_at = self.base_model.updated_at
+        self.assertNotEqual(old_updated_at, new_updated_at)
 
-    def test_delete(self):
-        # Test that the delete method deletes the current instance from the storage
-        model = BaseModel()
-        models.storage.add(model)
-        self.assertTrue(model in models.storage)
-        model.delete()
-        self.assertFalse(model in models.storage)
+    def test_to_dict_returns_dictionary(self):
+        base_model_dict = self.base_model.to_dict()
+        self.assertIsInstance(base_model_dict, dict)
 
+    def test_to_dict_contains_expected_keys(self):
+        expected_keys = ['id', 'created_at', 'updated_at', '__class__']
+        base_model_dict = self.base_model.to_dict()
+        self.assertCountEqual(base_model_dict.keys(), expected_keys)
 
-if __name__ == "__main__":
+    def test_to_dict_created_at_format(self):
+        base_model_dict = self.base_model.to_dict()
+        created_at_str = base_model_dict['created_at']
+        self.assertEqual(created_at_str, self.base_model.created_at.isoformat())
+
+    def test_to_dict_updated_at_format(self):
+        base_model_dict = self.base_model.to_dict()
+        updated_at_str = base_model_dict['updated_at']
+        self.assertEqual(updated_at_str, self.base_model.updated_at.isoformat())
+
+    def test_delete_calls_storage_delete(self):
+        with unittest.mock.patch('models.storage.delete') as mock_delete:
+            self.base_model.delete()
+            mock_delete.assert_called_once_with(self.base_model)
+
+if __name__ == '__main__':
     unittest.main()
