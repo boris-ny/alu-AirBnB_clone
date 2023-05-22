@@ -43,3 +43,13 @@ class FileStorage():
             FileStorage.__objects = new_dict
         except FileNotFoundError:
             pass
+    
+    def delete(self, obj=None):
+        """Deletes obj from __objects if it's inside"""
+        if obj is None:
+            key = obj.__class__.__name__ + "." + obj.id
+            del FileStorage.__objects[key]
+
+    def close(self):
+        """Calls reload() method"""
+        self.reload()
