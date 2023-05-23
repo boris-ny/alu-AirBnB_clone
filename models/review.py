@@ -1,6 +1,3 @@
-#!/usr/bin/python3
-"""Module for Review class"""
-
 from models.base_model import BaseModel
 
 
@@ -10,3 +7,7 @@ class Review(BaseModel):
     place_id = ""
     user_id = ""
     text = ""
+
+    def __init__(self, *args, **kwargs):
+        """Instantiates a Review object"""
+        super().__init__(*args, **kwargs)
