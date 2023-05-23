@@ -3,7 +3,7 @@
 import json
 
 
-class Filestorage:
+class FileStorage:
     """This class serializes instances to a JSON file"""
     __file_path = "file.json"
     __objects = {}
@@ -47,6 +47,5 @@ class Filestorage:
                 for key, val in temp.items():
                     Filestorage.__objects[key] = \
                         classes[val['__class__']](**val)
-        except: 
-            'File not found'
-        pass
+        except FileNotFoundError:
+            print("File not found")
