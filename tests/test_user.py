@@ -1,10 +1,10 @@
 #!/usr/bin/python3
-"""Unittest module for the City Class."""
+"""Unittest module for the User Class."""
 
 import unittest
 from datetime import datetime
 import time
-from models.city import City
+from models.user import User
 import re
 import json
 from models.engine.file_storage import FileStorage
@@ -13,9 +13,9 @@ from models import storage
 from models.base_model import BaseModel
 
 
-class TestCity(unittest.TestCase):
+class TestUser(unittest.TestCase):
 
-    """Test Cases for the City class."""
+    """Test Cases for the User class."""
 
     def setUp(self):
         """Sets up test methods."""
@@ -33,17 +33,17 @@ class TestCity(unittest.TestCase):
             os.remove(FileStorage._FileStorage__file_path)
 
     def test_8_instantiation(self):
-        """Tests instantiation of City class."""
+        """Tests instantiation of User class."""
 
-        b = City()
-        self.assertEqual(str(type(b)), "<class 'models.city.City'>")
-        self.assertIsInstance(b, City)
+        b = User()
+        self.assertEqual(str(type(b)), "<class 'models.user.User'>")
+        self.assertIsInstance(b, User)
         self.assertTrue(issubclass(type(b), BaseModel))
 
     def test_8_attributes(self):
-        """Tests the attributes of City class."""
-        attributes = storage.attributes()["City"]
-        o = City()
+        """Tests the attributes of User class."""
+        attributes = storage.attributes()["User"]
+        o = User()
         for k, v in attributes.items():
             self.assertTrue(hasattr(o, k))
             self.assertEqual(type(getattr(o, k, None)), v)
