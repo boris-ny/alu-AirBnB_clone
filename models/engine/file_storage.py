@@ -10,11 +10,7 @@ class FileStorage:
 
     def all(self):
         """Returns the dictionary __objects"""
-<<<<<<< HEAD
-        return Filestorage.__objects
-=======
         return FileStorage.__objects
->>>>>>> 9d13ffd5ceb620a4ee8d857f99814e12541b88d5
 
     def new(self, obj):
         """Sets in __objects the obj with key <obj class name>.id"""
@@ -52,8 +48,5 @@ class FileStorage:
                     Filestorage.__objects[key] = \
                         classes[val['__class__']](**val)
         except FileNotFoundError:
-<<<<<<< HEAD
             print('File not found')
-=======
-            print("File not found")
->>>>>>> 9d13ffd5ceb620a4ee8d857f99814e12541b88d5
+
