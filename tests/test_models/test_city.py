@@ -3,10 +3,7 @@
 
 import unittest
 from datetime import datetime
-import time
 from models.city import City
-import re
-import json
 from models.engine.file_storage import FileStorage
 import os
 from models import storage

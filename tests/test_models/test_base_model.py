@@ -1,55 +1,77 @@
+#!/usr/bin/python3
+"""Testing for BaseModel class"""
 import unittest
-from datetime import datetime
-from models import BaseModel
+import datetime
+from models.base_model import BaseModel
+import os
+from uuid import UUID
+import json
+import pycodestyle
+
 
 class TestBaseModel(unittest.TestCase):
+    """Testing class for BaseModel"""
+
+    def __init__(self, *args, **kwargs):
+        """initializes"""
+        super().__init__(*args, **kwargs)
+        self.name = "BaseModel"
+        self.value = BaseModel
+
     def setUp(self):
-        self.base_model = BaseModel()
+        """Setting up"""
+        self.name = "BaseModel"
+        self.value = BaseModel
 
-    def test_attributes_existence(self):
-        self.assertTrue(hasattr(self.base_model, 'id'))
-        self.assertTrue(hasattr(self.base_model, 'created_at'))
-        self.assertTrue(hasattr(self.base_model, 'updated_at'))
+    def tearDown(self):
+        """Cleaning up after each test"""
+        try:
+            os.remove("file.json")
+        except: "file.json does not exist"
+            pass
 
-    def test_id_generation(self):
-        self.assertIsNotNone(self.base_model.id)
-        self.assertIsInstance(self.base_model.id, str)
+    def test_pycode(self):
+        """Testing for pep8"""
+        style = pycodestyle.StyleGuide(quiet=True)
+        result = style.check_files(["models/base_model.py"])
+        self.assertEqual(result.total_errors, 0, "fix pep8")
 
-    def test_created_at_type(self):
-        self.assertIsInstance(self.base_model.created_at, datetime)
+    def test_default(self):
+        """Testing for default"""
+        i = self.value()
+        self.assertEqual(type(i), self.value)
 
-    def test_updated_at_type(self):
-        self.assertIsInstance(self.base_model.updated_at, datetime)
+    def test_kwargs(self):
+        """Testing for kwargs"""
+        i = self.value(id="56d43177-cc5f-4d6c-a0c1-e167f8c27337")
+        self.assertEqual(type(i.id), str)
+        self.assertEqual(i.id, "56d43177-cc5f-4d6c-a0c1-e167f8c27337")
 
-    def test_save_updates_updated_at(self):
-        old_updated_at = self.base_model.updated_at
-        self.base_model.save()
-        new_updated_at = self.base_model.updated_at
-        self.assertNotEqual(old_updated_at, new_updated_at)
+    def test_save(self):
+        """Testing for save"""
+        i = self.value()
+        i.save()
+        key = self.name + "." + i.id
+        with open("file.json", "r") as f:
+            dic = json.load(f)
+            self.assertEqual(dic[key], i.to_dict())
 
-    def test_to_dict_returns_dictionary(self):
-        base_model_dict = self.base_model.to_dict()
-        self.assertIsInstance(base_model_dict, dict)
+    def test_str(self):
+        """Testing for str"""
+        i = self.value()
+        self.assertEqual(str(i), "[{}] ({}) {}".format(self.name, i.id,
+                                                       i.__dict__))
 
-    def test_to_dict_contains_expected_keys(self):
-        expected_keys = ['id', 'created_at', 'updated_at', '__class__']
-        base_model_dict = self.base_model.to_dict()
-        self.assertCountEqual(base_model_dict.keys(), expected_keys)
+    def test_to_dict(self):
+        """Testing for to_dict"""
+        i = self.value()
+        i_dict = i.to_dict()
+        self.assertEqual(type(i_dict), dict)
+        self.assertTrue(hasattr(i_dict, "__class__"))
+        self.assertEqual(type(i_dict["created_at"]), str)
+        self.assertEqual(type(i_dict["updated_at"]), str)
+        self.assertEqual(i_dict["__class__"], self.name)
 
-    def test_to_dict_created_at_format(self):
-        base_model_dict = self.base_model.to_dict()
-        created_at_str = base_model_dict['created_at']
-        self.assertEqual(created_at_str, self.base_model.created_at.isoformat())
 
-    def test_to_dict_updated_at_format(self):
-        base_model_dict = self.base_model.to_dict()
-        updated_at_str = base_model_dict['updated_at']
-        self.assertEqual(updated_at_str, self.base_model.updated_at.isoformat())
-
-    def test_delete_calls_storage_delete(self):
-        with unittest.mock.patch('models.storage.delete') as mock_delete:
-            self.base_model.delete()
-            mock_delete.assert_called_once_with(self.base_model)
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()
