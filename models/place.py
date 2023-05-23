@@ -1,4 +1,4 @@
-#!/usr/bin/python3	
+#!/usr/bin/python3
 """This module defines a class Place"""
 from models.base_model import BaseModel, Base
 from sqlalchemy.ext.declarative import declarative_base
@@ -10,14 +10,17 @@ import models
 if getenv("HBNB_TYPE_STORAGE") == "db":
     place_amenity = Table("place_amenity", Base.metadata,
                             Column("place_id", String(60),
-                                     ForeignKey("places.id"),
-                                     primary_key=True,
-                                     nullable=False),
+                                    ForeignKey("places.id"),
+                                    primary_key=True,
+                                    nullable=False),
                             Column("amenity_id", String(60),
-                                     ForeignKey("amenities.id"),
-                                     primary_key=True,
-                                     nullable=False))
-class Place(BaseModel,Base):
+                                    ForeignKey("amenities.id"),
+                                    primary_key=True,
+                                    nullable=False))
+
+
+class Place(BaseModel, Base):
+
     """
     Represents a Place for a MySQL database.
     """
@@ -33,11 +36,12 @@ class Place(BaseModel,Base):
         price_by_night = Column(Integer, nullable=False, default=0)
         latitude = Column(Float, nullable=False)
         longitude = Column(Float, nullable=False)
-        reviews = relationship("Review", backref="place", cascade="all, delete")
-        amenities = relationship("Amenity",             
-                                secondary=place_amenity,
-                                viewonly=False,
-                                backref="place_amenities")
+        reviews = relationship("Review", backref="place", cascade="all, delete"
+                               )
+        amenities = relationship("Amenity",
+                                    secondary=place_amenity,
+                                    viewonly=False,
+                                    backref="place_amenities")
     else:
         city_id = ""
         user_id = ""
@@ -50,7 +54,7 @@ class Place(BaseModel,Base):
         latitude = 0.0
         longitude = 0.0
         amenity_ids = []
-    
+
     def __init__(self, *args, **kwargs):
         """
         Initializes a Place.
@@ -68,7 +72,7 @@ class Place(BaseModel,Base):
             if review.place_id == self.id:
                 review_list.append(review)
         return review_list
-    
+
     if getenv("HBNB_TYPE_STORAGE") != "db":
         @property
         def amenities(self):

@@ -2,8 +2,6 @@
 """Test for Amenity class"""
 from tests.test_models.test_base_model import TestBaseModel
 from models.amenity import Amenity
-import unittest
-import os
 
 class Test_Amenity(TestBaseModel):
     """Testing Amenity class"""
