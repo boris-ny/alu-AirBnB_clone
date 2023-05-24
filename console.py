@@ -9,148 +9,52 @@ from models.amenity import Amenity
 from models.review import Review
 from models.place import Place
 from models import storage
+import json
 
-classes = {
-    "BaseModel": BaseModel,
-    "User": User,
-    "State": State,
-    "City": City,
-    "Amenity": Amenity,
-    "Review": Review,
-    "Place": Place
-}
+class FileStorage:
+    """
+    class FileStorage
+    Represent the file storage engine
+    It serializes instances to a JSON file and deserializes JSON file to instances
+    """
 
 
-class HBNBCommand(cmd.Cmd):
-    """console class for AirBnB"""
-    prompt = '(hbnb) '
+    __file_path = "file.json"
+    __objects = {}
 
-    def do_quit(self, arg):
-        """Quit command to exit the program"""
-        return True
+    def all(self):
+        """
+        Public instance method
+        Returns the dictionary __objects
+        """
+        return self.__objects
+    
+    def new(self, obj):
+        """
+        Public instance method
+        Sets in __objects the obj with key <obj class name>.id
+        """
+        self.__objects["{}.{}".format(obj.__class__.__name__, obj.id)] = obj
 
-    def do_EOF(self, arg):
-        """EOF command to exit the program"""
-        return True
+    def save(self):
+        """
+        Public instance method
+        Serializes __objects to the JSON file (path: __file_path)
+        """
+        with open(self.__file_path, "w") as f:
+            new_dict = {}
+            for key, value in self.__objects.items():
+                new_dict[key] = value.to_dict()
+            json.dump(new_dict, f)
 
-    def help_quit(self):
-        """Help command for quit"""
-        print("Quit command to exit the program")
-
-    def help_EOF(self):
-        """Help command for EOF"""
-        print("EOF command to exit the program")
-
-    def do_help(self, arg):
-        """Help command for help"""
-        super().do_help(arg)
-
-    def help_help(self):
-        """Help command for help"""
-        print("Help command for help")
-
-    def emptyline(self):
-        """Empty line"""
-        pass
-
-    def do_create(self, arg):
-        """Create command to create a new instance"""
-        if not arg:
-            print("** class name missing **")
-        elif arg not in classes:
-            print("** class doesn't exist **")
-        else:
-            model = classes[arg]()
-            storage.save()
-            print(model.id)
-
-    def help_create(self):
-        """Help command for create"""
-        print("Create command to create a new instance")
-
-    def do_show(self, arg):
-        """Show command to show an instance"""
-        args = arg.split()
-        if not arg:
-            print("** class name missing **")
-        elif args[0] not in classes:
-            print("** class doesn't exist **")
-        elif len(args) < 2:
-            print("** instance id missing **")
-        else:
-            key = args[0] + '.' + args[1]
-            if key in storage.all():
-                print(storage.all()[key])
-            else:
-                print("** no instance found **")
-
-    def help_show(self):
-        """Help command for show"""
-        print("Show command to show an instance")
-
-    def do_destroy(self, arg):
-        """Destroy command to destroy an instance"""
-        args = arg.split()
-        if not arg:
-            print("** class name missing **")
-        elif args[0] not in classes:
-            print("** class doesn't exist **")
-        elif len(args) < 2:
-            print("** instance id missing **")
-        else:
-            key = args[0] + '.' + args[1]
-            if key in storage.all():
-                del storage.all()[key]
-                storage.save()
-            else:
-                print("** no instance found **")
-
-    def help_destroy(self):
-        """Help command for destroy"""
-        print("Destroy command to destroy an instance")
-
-    def do_all(self, arg):
-        """All command to show all instances"""
-        args = arg.split()
-        if not arg:
-            for key in storage.all():
-                print(storage.all()[key])
-        elif args[0] not in classes:
-            print("** class doesn't exist **")
-        else:
-            for key in storage.all():
-                if args[0] in key:
-                    print(storage.all()[key])
-
-    def help_all(self):
-        """Help command for all"""
-        print("All command to show all instances")
-
-    def do_update(self, arg):
-        """Update command to update an instance"""
-        args = arg.split()
-        if not arg:
-            print("** class name missing **")
-        elif args[0] not in classes:
-            print("** class doesn't exist **")
-        elif len(args) < 2:
-            print("** instance id missing **")
-        elif len(args) < 3:
-            print("** attribute name missing **")
-        elif len(args) < 4:
-            print("** value missing **")
-        else:
-            key = args[0] + '.' + args[1]
-            if key in storage.all():
-                setattr(storage.all()[key], args[2], args[3])
-                storage.save()
-            else:
-                print("** no instance found **")
-
-    def help_update(self):
-        """Help command for update"""
-        print("Update command to update an instance")
-
-
-if __name__ == '__main__':
-    HBNBCommand().cmdloop()
+    def reload(self):
+        """
+        deserializes the JSON file to __objects
+        """
+        try:
+            with open(self.__file_path) as f:
+                serialized = json.load(f)
+                for key in serialized.values():
+                    self.new(eval(key["__class__"] + "(**" + str(key) + ")"))
+        except FileNotFoundError:
+            pass
