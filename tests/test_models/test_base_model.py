@@ -27,7 +27,7 @@ class TestBaseModel(unittest.TestCase):
         """Cleaning up after each test"""
         try:
             os.remove("file.json")
-        except: "file.json does not exist"
+        except FileNotFoundError:
             pass
 
     def test_pycode(self):
