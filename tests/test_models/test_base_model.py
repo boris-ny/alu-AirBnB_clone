@@ -1,65 +1,45 @@
 #!/usr/bin/python3
 """Unittest for BaseModel class"""
+
 import unittest
 from models.base_model import BaseModel
-from datetime import datetime
-import uuid
-import json
-import os
 
-class TestBaseModel(unittest.TestCase):
-    """This class tests the BaseModel class"""
-    def setUp(self):
-        """This method sets up the tests"""
-        self.base1 = BaseModel()
-        self.base2 = BaseModel()
-        self.base3 = BaseModel()
 
-    def tearDown(self):
-        """This method tears down the tests"""
-        del self.base1
-        del self.base2
-        del self.base3
-        try:
-            os.remove("file.json")
-        except FileNotFoundError:
-            pass
+class TestBasemodel(unittest.TestCase):
+    """Testing BaseModel class"""
 
-    def test_attributes(self):
-        """This method tests the attributes of BaseModel"""
-        self.assertTrue(hasattr(self.base1, "id"))
-        self.assertTrue(hasattr(self.base1, "created_at"))
-        self.assertTrue(hasattr(self.base1, "updated_at"))
-        self.assertFalse(hasattr(self.base1, "random_attr"))
-        self.assertEqual(self.base1.__class__.__name__, "BaseModel")
-        self.assertEqual(self.base1.id, self.base1.id)
-        self.assertEqual(self.base1.created_at, self.base1.created_at)
-        self.assertEqual(self.base1.updated_at, self.base1.updated_at)
-        self.assertNotEqual(self.base1.id, self.base2.id)
-        self.assertNotEqual(self.base1.created_at, self.base2.created_at)
-        self.assertNotEqual(self.base1.updated_at, self.base2.updated_at)
-        self.assertEqual(self.base1.__class__.__name__, self.base2.__class__.__name__)
+    def test_init(self):
+        model = BaseModel()
+        self.assertEqual(
+            str(type(model)), "<class 'models.base_model.BaseModel'>")
+        self.assertEqual(str(type(model.id)), "<class 'str'>")
+        self.assertEqual(
+            str(type(model.created_at)), "<class 'datetime.datetime'>")
+        self.assertEqual(
+            str(type(model.updated_at)), "<class 'datetime.datetime'>")
 
-    def test_created_at(self):
-        """This method tests the created_at attribute"""
-        self.assertTrue(hasattr(self.base1, "created_at"))
-        self.assertEqual(self.base1.created_at, self.base1.created_at)
-        self.assertNotEqual(self.base1.created_at, self.base2.created_at)
-        self.assertEqual(type(self.base1.created_at), datetime)
-
-    def test_updated_at(self):
-        """This method tests the updated_at attribute"""
-        self.assertTrue(hasattr(self.base1, "updated_at"))
-        self.assertEqual(self.base1.updated_at, self.base1.updated_at)
-        self.assertNotEqual(self.base1.updated_at, self.base2.updated_at)
-        self.assertEqual(type(self.base1.updated_at), datetime)
+    def test_str(self):
+        """test str method"""
+        model = BaseModel()
+        self.assertEqual(
+            str(model), "[{}] ({}) {}".format(
+                model.__class__.__name__, model.id, model.__dict__))
 
     def test_save(self):
-        """This method tests the save method"""
-        self.base1.save()
-        self.assertNotEqual(self.base1.created_at, self.base1.updated_at)
-        self.assertEqual(type(self.base1.updated_at), datetime)
+        """test save method"""
+        model = BaseModel()
+        model.save()
+        self.assertNotEqual(model.created_at, model.updated_at)
 
     def test_to_dict(self):
-        """This method tests the to_dict method"""
-        self.base1
+        """test to_dict method"""
+        model = BaseModel()
+        model_dict = model.to_dict()
+        self.assertEqual(model_dict["__class__"], "BaseModel")
+        self.assertEqual(str(type(model_dict["created_at"])), "<class 'str'>")
+        self.assertEqual(str(type(model_dict["updated_at"])), "<class 'str'>")
+        self.assertEqual(str(type(model_dict["id"])), "<class 'str'>")
+
+
+if __name__ == "__main__":
+    unittest.main()
