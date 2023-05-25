@@ -1,44 +1,49 @@
 #!/usr/bin/python3
-"""This module defines a class BaseModel"""
-
+"""base model class"""
 import uuid
-from datetime import datetime
+import datetime
 import models
 
 
 class BaseModel:
-    """A base class for all models"""
+
+    """initialise class"""
 
     def __init__(self, *args, **kwargs):
-        """Initialize a new BaseModel."""
         if kwargs:
             for key, value in kwargs.items():
                 if key == "__class__":
-                    continue
-                if key == "created_at" or key == "updated_at":
-                    value = datetime.strptime(value, "%Y-%m-%dT%H:%M:%S.%f")
-                setattr(self, key, value)
+                    pass
+                elif key == "created_at" or key == "updated_at":
+                    value = datetime.datetime.strptime(
+                        value, '%Y-%m-%dT%H:%M:%S.%f')
+                    setattr(self, key, value)
+                else:
+                    setattr(self, key, value)
         else:
             self.id = str(uuid.uuid4())
-            self.created_at = datetime.now()
-            self.updated_at = datetime.now()
+            self.created_at = datetime.datetime.now()
+            self.updated_at = self.created_at
             models.storage.new(self)
-            models.storage.save()
+
+    """return string representation"""
 
     def __str__(self):
-        """Return a string representation of this BaseModel instance."""
-        cls = type(self).__name__
-        return "[{}] ({}) {}".format(cls, self.id, self.__dict__)
+        dt = "[{}] ({}) {}".format(
+            self.__class__.__name__, self.id, self.__dict__)
+        return dt
+
+    """modify the updateAt attribute"""
 
     def save(self):
-        """Update updated_at with the current datetime and save the object"""
-        self.updated_at = datetime.now()
+        self.updated_at = datetime.datetime.now()
         models.storage.save()
 
+    """return the dict"""
+
     def to_dict(self):
-        """Return a dictionary representation of this BaseModel instance."""
-        dictionary = dict(self.__dict__)
-        dictionary['__class__'] = type(self).__name__
-        dictionary['created_at'] = self.created_at.isoformat()
-        dictionary['updated_at'] = self.updated_at.isoformat()
-        return dictionary
+        obj = dict(self.__dict__)
+        obj["__class__"] = self.__class__.__name__
+        obj["created_at"] = obj["created_at"].isoformat()
+        obj["updated_at"] = obj["updated_at"].isoformat()
+        return obj
