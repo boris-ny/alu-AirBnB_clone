@@ -1,9 +1,9 @@
 #!/usr/bin/python3
 """Base model class"""
 
-import uuid
+from uuid import uuid4
 from datetime import datetime
-import models
+from models import storage
 
 
 class BaseModel:
@@ -23,7 +23,7 @@ class BaseModel:
                 elif key != "__class__":
                     self.__dict__[key] = value
                 else:
-                    models.storage.new(self)
+                    storage.new(self)
 
     def __str__(self):
         """Returns string representation of instance"""
@@ -33,7 +33,7 @@ class BaseModel:
     def save(self):
         """Save the current instance to the storage"""
         self.updated_at = datetime.today()
-        models.storage.save()
+        storage.save()
 
     def to_dict(self):
         """Return dictionary representation of the model instance"""
@@ -42,3 +42,4 @@ class BaseModel:
         returndict["created_at"] = self.created_at.isoformat()
         returndict["updated_at"] = self.updated_at.isoformat()
         return returndict
+
