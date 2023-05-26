@@ -1,15 +1,12 @@
 #!/usr/bin/python3
-import unittest
-from models.state import State
+"""State module"""
+from models.base_model import BaseModel
 
 
-class TestBase(unittest.TestCase):
-    def test_initialization(self):
-        state = State()
-        self.assertEqual(
-            str(type(state)), "<class 'models.state.State'>")
-        self.assertEqual(state.name, "")
+class State(BaseModel):
+    """State class"""
+    name = ""
 
-
-if __name__ == "__main__":
-    unittest.main()
+    def __init__(self, *args, **kwargs):
+        """initialise class"""
+        super().__init__(*args, **kwargs)
