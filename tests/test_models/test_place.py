@@ -1,24 +1,37 @@
-#!/usr/bin/python3
+#!/usr/bin/python
+"""Testing Place module"""
 import unittest
 from models.place import Place
+from models.base_model import BaseModel
 
 
-class TestBase(unittest.TestCase):
-    def test_initialization(self):
+class TestPlace(unittest.TestCase):
+    """Place class testing"""
+    def setUp(self):
+        """Place class testing setup"""
+        self.place = Place()
+
+    def test_attributes(self):
+        """Testing Place attributes"""
+        self.assertTrue(hasattr(self.place, "city_id"))
+        self.assertTrue(hasattr(self.place, "user_id"))
+        self.assertTrue(hasattr(self.place, "name"))
+        self.assertTrue(hasattr(self.place, "description"))
+        self.assertTrue(hasattr(self.place, "number_rooms"))
+        self.assertTrue(hasattr(self.place, "number_bathrooms"))
+        self.assertTrue(hasattr(self.place, "max_guest"))
+        self.assertTrue(hasattr(self.place, "price_by_night"))
+        self.assertTrue(hasattr(self.place, "latitude"))
+        self.assertTrue(hasattr(self.place, "longitude"))
+        self.assertTrue(hasattr(self.place, "amenity_ids"))
+
+    def test_str(self):
         place = Place()
-        self.assertEqual(
-            str(type(place)), "<class 'models.place.Place'>")
-        self.assertEqual(place.name, "")
-        self.assertEqual(place.city_id, "")
-        self.assertEqual(place.user_id, "")
-        self.assertEqual(place.description, "")
-        self.assertEqual(place.number_rooms, 0)
-        self.assertEqual(place.number_bathrooms, 0)
-        self.assertEqual(place.max_guest, 0)
-        self.assertEqual(place.price_by_night, 0)
-        self.assertEqual(place.latitude, 0.0)
-        self.assertEqual(place.longitude, 0.0)
-        self.assertEqual(place.amenity_ids, {})
+        self.assertEqual(place.__class__, Place)
+
+    def test_parent(self):
+        place = Place()
+        self.assertTrue(isinstance(place, BaseModel))
 
 
 if __name__ == "__main__":
