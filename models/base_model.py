@@ -1,9 +1,9 @@
 #!/usr/bin/python3
 """Base model class"""
 
-from uuid import uuid4
+import uuid
 from datetime import datetime
-from models import storage
+import models
 
 
 class BaseModel:
