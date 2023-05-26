@@ -1,3 +1,10 @@
+#!/usr/bin/python3
+"""
+    Defines unittests for 'models/engine/file_storage.py'
+    Unittest classes:
+        TestFileStorage_instantiation
+        TestFileStorage_methods
+"""
 import unittest
 from unittest.mock import patch
 from io import StringIO
@@ -62,6 +69,7 @@ class TestFileStorage(unittest.TestCase):
         TestFileStorage.storage._FileStorage__file_path = "non_existent_file.json"
         TestFileStorage.storage.reload()
         self.assertEqual(mock_stdout.getvalue().strip(), "")
+
 
 if __name__ == '__main__':
     unittest.main()
