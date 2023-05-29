@@ -1,20 +1,19 @@
 #!/usr/bin/python3
-import unittest
+""" """
+from tests.test_models.test_base_model import test_basemodel
 from models.amenity import Amenity
 
 
-class TestAmenity(unittest.TestCase):
-    """Testing Amenity class"""
-    def setUp(self):
-        """Amenity class testing setup"""
-        self.amenity = Amenity()
+class test_Amenity(test_basemodel):
+    """ """
 
-    def test_attributes(self):
-        """Testing Amenity attributes"""
-        self.assertEqual(
-            str(type(self.amenity)), "<class 'models.amenity.Amenity'>")
-        self.assertEqual(self.amenity.name, "")
+    def __init__(self, *args, **kwargs):
+        """ """
+        super().__init__(*args, **kwargs)
+        self.name = "Amenity"
+        self.value = Amenity
 
-
-if __name__ == "__main__":
-    unittest.main()
+    def test_name2(self):
+        """ """
+        new = self.value()
+        self.assertEqual(type(new.name), str)

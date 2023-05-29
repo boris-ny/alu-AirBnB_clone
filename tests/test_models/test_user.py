@@ -1,27 +1,34 @@
 #!/usr/bin/python3
-"""Testing User module"""
-import unittest
+""" """
+from tests.test_models.test_base_model import test_basemodel
 from models.user import User
-from models.base_model import BaseModel
 
 
-class TestUser(unittest.TestCase):
-    """User class testing"""
-    def setUp(self):
-        """User class testing setup"""
-        self.user = User()
+class test_User(test_basemodel):
+    """ """
 
-    def test_attributes(self):
-        """Testing User attributes"""
-        self.assertTrue(hasattr(self.user, "email"))
-        self.assertTrue(hasattr(self.user, "password"))
-        self.assertTrue(hasattr(self.user, "first_name"))
-        self.assertTrue(hasattr(self.user, "last_name"))
+    def __init__(self, *args, **kwargs):
+        """ """
+        super().__init__(*args, **kwargs)
+        self.name = "User"
+        self.value = User
 
-    def test_str(self):
-        user = User()
-        self.assertEqual(user.__class__, User)
+    def test_first_name(self):
+        """ """
+        new = self.value()
+        self.assertEqual(type(new.first_name), str)
 
-    def test_parent(self):
-        user = User()
-        self.assertTrue(isinstance(user, BaseModel))
+    def test_last_name(self):
+        """ """
+        new = self.value()
+        self.assertEqual(type(new.last_name), str)
+
+    def test_email(self):
+        """ """
+        new = self.value()
+        self.assertEqual(type(new.email), str)
+
+    def test_password(self):
+        """ """
+        new = self.value()
+        self.assertEqual(type(new.password), str)

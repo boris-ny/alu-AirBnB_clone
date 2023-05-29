@@ -1,18 +1,24 @@
 #!/usr/bin/python3
-"""This the test for the city class"""
-import unittest
+""" """
+from tests.test_models.test_base_model import test_basemodel
 from models.city import City
 
 
-class TestCity(unittest.TestCase):
-    def test_attr(self):
-        """City testing setup"""
-        self.city = City()
-        self.assertEqual(
-            str(type(City)), "<class 'models.city.City'>")
-        self.assertEqual(City.name, "")
-        self.assertEqual(City.state_id, "")
+class test_City(test_basemodel):
+    """ """
 
+    def __init__(self, *args, **kwargs):
+        """ """
+        super().__init__(*args, **kwargs)
+        self.name = "City"
+        self.value = City
 
-if __name__ == "__main__":
-    unittest.main()
+    def test_state_id(self):
+        """ """
+        new = self.value()
+        self.assertEqual(type(new.state_id), str)
+
+    def test_name(self):
+        """ """
+        new = self.value()
+        self.assertEqual(type(new.name), str)
